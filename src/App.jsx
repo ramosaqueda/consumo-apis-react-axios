@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import Logo from './components/Logo/Logo';
+import SearchBar from './components/SearchBar/SearchBar';
 import TVShowDetail from './components/TVShowDetail/TvShowDetail';
 import { TVShowAPI } from './api/tv-show';
 import { BACKDROP_BASE_URL } from './config';
@@ -16,13 +17,18 @@ function App() {
     }
   }
 
+  async function fetchByTitle(title) {
+    const searchResponse = await TVShowAPI.fetchByTitle(title);
+    if (searchResponse.length > 0) {
+      setCurrentTVShow(searchResponse[0]);
+    }
+  }
+
   useEffect(() => {
     fetchPopulars();
   }, []);
 
   console.log(currentTVShow);
-
-  console.log(BACKDROP_BASE_URL);
 
   return (
     <div
@@ -37,14 +43,10 @@ function App() {
       <div className={s.header}>
         <div className="row">
           <div className="col-4">
-            <Logo
-              title="WatchShows"
-              subtitle="Find a show you may like "
-              image={logoImg}
-            />
+            <Logo title="WatchShows" image={logoImg} />
           </div>
           <div className="col-md-12 col-lg-4">
-            <input style={{ width: '100%' }} type="text" />
+            <SearchBar onSubmit={fetchByTitle} />
           </div>
         </div>
       </div>
